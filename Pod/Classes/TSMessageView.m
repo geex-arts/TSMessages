@@ -177,8 +177,7 @@ static NSMutableDictionary *_notificationDesign;
 
 - (CGFloat)padding
 {
-    // Adds 10 padding to to cover navigation bar
-    return self.messagePosition == TSMessageNotificationPositionNavBarOverlay ? TSMessageViewMinimumPadding + 10.0f : TSMessageViewMinimumPadding;
+    return TSMessageViewMinimumPadding;
 }
 
 - (id)initWithTitle:(NSString *)title
@@ -208,7 +207,13 @@ canBeDismissedByUser:(BOOL)dismissingEnabled
 
         CGFloat screenWidth = self.viewController.view.bounds.size.width;
         CGFloat padding = [self padding];
-
+        CGFloat topPadding = padding;
+        
+        if (self.messagePosition == TSMessageNotificationPositionNavBarOverlay)
+        {
+            topPadding += 12;
+        }
+        
         NSDictionary *current;
         NSString *currentString;
         notificationType = aNotificationType;
@@ -276,8 +281,8 @@ canBeDismissedByUser:(BOOL)dismissingEnabled
 
 
         self.textSpaceLeft = 2 * padding;
-        if (image) self.textSpaceLeft += image.size.width + 2 * padding;
-
+        if (image) self.textSpaceLeft += image.size.width + padding;
+        
         // Set up title label
         _titleLabel = [[UILabel alloc] init];
         [self.titleLabel setText:title];
@@ -330,7 +335,7 @@ canBeDismissedByUser:(BOOL)dismissingEnabled
         {
             _iconImageView = [[UIImageView alloc] initWithImage:image];
             self.iconImageView.frame = CGRectMake(padding * 2,
-                                                  padding,
+                                                  topPadding,
                                                   image.size.width,
                                                   image.size.height);
             [self addSubview:self.iconImageView];
@@ -450,9 +455,15 @@ canBeDismissedByUser:(BOOL)dismissingEnabled
     CGFloat currentHeight;
     CGFloat screenWidth = self.viewController.view.bounds.size.width;
     CGFloat padding = [self padding];
-
+    CGFloat topPadding = padding;
+    
+    if (self.messagePosition == TSMessageNotificationPositionNavBarOverlay)
+    {
+        topPadding += 12;
+    }
+    
     self.titleLabel.frame = CGRectMake(self.textSpaceLeft,
-                                       padding,
+                                       topPadding,
                                        screenWidth - padding - self.textSpaceLeft - self.textSpaceRight,
                                        0.0);
     [self.titleLabel sizeToFit];
